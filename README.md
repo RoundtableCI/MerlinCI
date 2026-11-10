@@ -35,9 +35,28 @@ channels and policies are configuration, so other companies can run their own.
 | Dashboard | React + TypeScript |
 | Analytics / monitoring | PostHog, Prometheus, Grafana |
 
+## Repository layout
+
+```
+cmd/            merlin-api (control plane), merlin-worker (runtime + workflows), merlinctl (CLI)
+internal/       runtime, orchestrator, gateway, policy, budget, tools, workflow, integrations,
+                store, memory, blob, cache, artifacts, profile, campaign, eval, analytics,
+                telemetry, config, capabilities/ (the seven product capabilities)
+pkg/            the seven public extension points
+schemas/        open agent configuration format and core records
+configs/        roles, workflow templates, examples/roundtableci
+migrations/     PostgreSQL migrations
+deploy/         docker-compose for local dependencies, Prometheus, Grafana
+web/            React + TypeScript dashboard
+docs/           architecture, development, decisions
+```
+
+See [docs/architecture.md](docs/architecture.md) for how each part of the plan maps to code, and
+[docs/development.md](docs/development.md) to run it locally.
+
 ## Phase 0 — start here
 
-1. Create the repository
+1. ~~Create the repository~~
 2. Decide license and contribution policy
 3. Write profile schema and seed config
 4. Define agent, task and artifact schemas
