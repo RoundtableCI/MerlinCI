@@ -1,0 +1,28 @@
+# Binaries
+/bin/
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go
+/vendor/
+go.work
+go.work.sum
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Frontend
+node_modules/
+dist/
