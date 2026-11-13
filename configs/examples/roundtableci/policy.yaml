@@ -1,0 +1,64 @@
+# Autonomy policy (deck slide 11). Enforced by the policy engine, not by trusting
+# an agent's instructions. An action no rule matches is denied.
+apiVersion: merlinci/v1alpha1
+kind: Policy
+metadata:
+  name: roundtableci
+spec:
+  default: deny
+  rules:
+    # Automatic: runs without asking.
+    - action: research.*
+      tier: automatic
+      reason: Research and competitor monitoring
+    - action: draft.*
+      tier: automatic
+      reason: Drafting
+    - action: campaign.plan
+      tier: automatic
+      reason: Campaign planning
+    - action: seo.audit
+      tier: automatic
+      reason: SEO audits
+    - action: analytics.internal.*
+      tier: automatic
+      reason: Internal analytics
+    - action: schedule.internal
+      tier: automatic
+      reason: Internal scheduling
+    - action: task.delegate
+      tier: automatic
+      reason: Delegation
+
+    # The deck places these four in the conditional tier, which needs a channel,
+    # content and frequency policy. No channel is chosen yet (open decisions 08
+    # and 12), so until then a person approves each one.
+    - action: publish.*
+      tier: explicit
+      reason: Publishing routine approved content
+    - action: newsletter.schedule
+      tier: explicit
+      reason: Scheduling newsletters
+    - action: site.update
+      tier: explicit
+      reason: Updating approved site content
+    - action: reply.public
+      tier: explicit
+      reason: Public replies through authorized workflows
+
+    # Explicit authorization: a person approves each time.
+    - action: spend.*
+      tier: explicit
+      reason: Paid ad spend
+    - action: budget.increase
+      tier: explicit
+      reason: Budget increases
+    - action: outreach.*
+      tier: explicit
+      reason: Cold outreach and unsolicited DMs
+    - action: list.import
+      tier: explicit
+      reason: Unapproved lists
+    - action: campaign.delete
+      tier: explicit
+      reason: Deleting campaigns

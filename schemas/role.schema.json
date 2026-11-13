@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MerlinCI role documents",
+  "description": "Runtime roles (kind: RuntimeRole) and logical roles (kind: Role). A role is a configuration and a responsibility contract run by one reusable runtime. Deck slides 8 and 13.",
+  "oneOf": [{ "$ref": "#/$defs/RuntimeRole" }, { "$ref": "#/$defs/Role" }],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "action": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$" },
+    "amount": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]{1,2})?$" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "$ref": "#/$defs/id" },
+        "description": { "type": "string" }
+      }
+    },
+    "RuntimeRole": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apiVersion", "kind", "metadata", "spec"],
+      "properties": {
+        "apiVersion": { "const": "merlinci/v1alpha1" },
+        "kind": { "const": "RuntimeRole" },
+        "metadata": { "$ref": "#/$defs/metadata" },
+        "spec": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["responsibility"],
+          "properties": {
+            "responsibility": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "Role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apiVersion", "kind", "metadata", "spec"],
+      "properties": {
+        "apiVersion": { "const": "merlinci/v1alpha1" },
+        "kind": { "const": "Role" },
+        "metadata": { "$ref": "#/$defs/metadata" },
+        "spec": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["runtimeRole", "enabled", "responsibility", "instructions", "tools", "permissions", "output", "evaluation", "limits"],
+          "properties": {
+            "runtimeRole": { "$ref": "#/$defs/id" },
+            "enabled": {
+              "description": "A role stays disabled until its tools, permissions and evaluation are ready.",
+              "type": "boolean"
+            },
+            "responsibility": { "type": "string", "minLength": 1 },
+            "instructions": { "type": "string", "minLength": 1 },
+            "model": {
+              "description": "A model from the allowlist. Omit to use the default model.",
+              "type": "string",
+              "minLength": 1
+            },
+            "tools": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+            "permissions": {
+              "description": "Actions this role may request. The policy engine still decides each one.",
+              "type": "array",
+              "items": { "$ref": "#/$defs/action" },
+              "uniqueItems": true
+            },
+            "output": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["artifactKind"],
+              "properties": { "artifactKind": { "$ref": "#/$defs/id" } }
+            },
+            "evaluation": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["evaluators"],
+              "properties": {
+                "evaluators": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true }
+              }
+            },
+            "limits": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["maxSteps", "maxCostPerTask"],
+              "properties": {
+                "maxSteps": { "type": "integer", "minimum": 1 },
+                "maxOutputTokens": {
+                  "description": "The most one model reply may be, in tokens. It is part of the worst-case cost reserved before each call. Defaults to 4096.",
+                  "type": "integer",
+                  "minimum": 256,
+                  "maximum": 32000
+                },
+                "maxCostPerTask": { "$ref": "#/$defs/amount" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

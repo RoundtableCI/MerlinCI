@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MerlinCI task record",
+  "description": "A unit of work for one role, as the API returns it. A person starts a task, or the orchestrator does as a step of a campaign. Deck slide 10.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "role", "status", "createdBy", "input", "createdAt"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "role": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "status": {
+      "description": "pending until the run writes its first checkpoint.",
+      "enum": ["pending", "running", "awaiting_approval", "succeeded", "failed", "cancelled"]
+    },
+    "createdBy": {
+      "description": "Who started the task: operator for a person using the API, orchestrator for a campaign step.",
+      "enum": ["operator", "orchestrator"]
+    },
+    "input": { "type": ["object", "null"] },
+    "createdAt": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T" }
+  }
+}

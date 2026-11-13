@@ -1,0 +1,9 @@
+{
+  "identities": [
+    {
+      "name": "merlin",
+      "credentials": [{ "accessKey": "merlin", "secretKey": "merlin-local-only" }],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    }
+  ]
+}

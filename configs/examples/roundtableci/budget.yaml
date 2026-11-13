@@ -1,0 +1,29 @@
+# Budget (deck slide 15). Spend is capped before it is spent. Agents can never
+# raise their own limit. No autonomous ad spend.
+apiVersion: merlinci/v1alpha1
+kind: Budget
+metadata:
+  name: roundtableci
+spec:
+  currency: INR
+  limits:
+    - category: inference
+      period: day
+      amount: "150.00"
+    - category: inference
+      period: month
+      amount: "3000.00"
+    - category: research
+      period: month
+      amount: "500.00"
+  alertThresholds: [0.7, 0.9]
+  atLimit: stop
+  # OpenRouter bills in US dollars. This is a fixed planning rate, set by the
+  # operator and rounded up so that spend is over-counted rather than under-counted.
+  # Keep it at or above the real rate.
+  # What one web search costs, charged to the research budget before the search runs.
+  # PLACEHOLDER pending decision 07: Brave Search at about $5 per 1,000 queries.
+  unitCosts:
+    research.search: "0.45"
+  exchangeRates:
+    USD: "90.00"

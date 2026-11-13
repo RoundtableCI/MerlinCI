@@ -1,0 +1,24 @@
+# Audience hypotheses (deck slide 7). Hypotheses to validate, not facts.
+apiVersion: merlinci/v1alpha1
+kind: Audiences
+metadata:
+  name: roundtableci
+spec:
+  segments:
+    - id: multi-model-developers
+      description: Developers using multiple models
+      status: hypothesis
+    - id: output-comparers
+      description: Developers comparing model outputs
+      status: hypothesis
+    - id: ai-builders-and-founders
+      description: AI product builders, technical founders
+      status: hypothesis
+    - id: engineering-leads
+      description: Engineering leads weighing AI workflows
+      status: hypothesis
+    - id: evaluation-researchers
+      description: Researchers testing model evaluation
+      status: hypothesis
+  # Open decision 06: the competitor list is not decided yet.
+  competitors: []

@@ -1,0 +1,6 @@
+apiVersion: merlinci/v1alpha1
+kind: RuntimeRole
+metadata:
+  name: cmo
+spec:
+  responsibility: Accepts, rejects or reprioritizes campaign briefs, and sets the next cycle.
