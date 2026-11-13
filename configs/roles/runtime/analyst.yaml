@@ -1,0 +1,6 @@
+apiVersion: merlinci/v1alpha1
+kind: RuntimeRole
+metadata:
+  name: analyst
+spec:
+  responsibility: Reports traffic, signups and activation, attributed by campaign.

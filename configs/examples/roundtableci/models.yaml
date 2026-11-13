@@ -1,0 +1,25 @@
+# Model allowlist (deck slides 12, 15; open decision 11). MerlinCI calls no model that is
+# not listed here. The prices are what the budget uses to cap a call before it is made, so
+# they must be at or above what the provider charges.
+#
+# PLACEHOLDER pending decision 11. Prices are US dollars per million tokens, read from
+# OpenRouter's public model list on 13 Nov 2026.
+apiVersion: merlinci/v1alpha1
+kind: Models
+metadata:
+  name: roundtableci
+spec:
+  provider: openrouter
+  currency: USD
+  default: anthropic/claude-haiku-5.5
+  # Brand Guardian reviews with the stronger model.
+  evaluatorModel: anthropic/claude-sonnet-5.5
+  models:
+    # Research, ranking and analysis.
+    - id: anthropic/claude-haiku-5.5
+      inputPerMillionTokens: "0.10"
+      outputPerMillionTokens: "0.50"
+    # Writing and review.
+    - id: anthropic/claude-sonnet-5.5
+      inputPerMillionTokens: "2.00"
+      outputPerMillionTokens: "10.00"

@@ -1,0 +1,6 @@
+apiVersion: merlinci/v1alpha1
+kind: RuntimeRole
+metadata:
+  name: strategist
+spec:
+  responsibility: Positioning. Turns ranked opportunities into campaign briefs.

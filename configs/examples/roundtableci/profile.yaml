@@ -1,0 +1,50 @@
+# RoundtableCI product profile (deck slides 4, 7).
+#
+# Agents work from this file and never infer features from old copy. The product
+# summary, features and approved claims below are NOT yet written: they must come
+# from the RoundtableCI team. Until they do, nothing public can be produced from
+# this profile.
+apiVersion: merlinci/v1alpha1
+kind: Profile
+metadata:
+  name: roundtableci
+spec:
+  # Set to approved, with approvedBy and approvedOn, once the team has written and
+  # checked the product summary, features and claims below.
+  approval:
+    status: draft
+  company:
+    name: RoundtableCI
+  products:
+    - id: roundtableci
+      name: RoundtableCI
+      summary: TO BE SUPPLIED by the RoundtableCI team.
+      features: []
+  claims:
+    # Each approved claim needs a specific, reproducible evaluation as evidence.
+    approved: []
+    prohibited:
+      - RoundtableCI is more accurate than alternatives
+      - RoundtableCI is faster than alternatives
+      - RoundtableCI is cheaper than alternatives
+      - RoundtableCI is superior to alternatives
+  northStar:
+    metric: activated-workspaces
+    # Open decision 05. A page view or an account creation alone is not activation.
+    activationEvent: null
+    decides:
+      - qualified visitors
+      - signups completed
+      - activated workspaces
+      - first successful workflow
+      - returning users
+      - referral conversions
+    diagnosticOnly:
+      - likes
+      - impressions
+      - assets generated
+  objectives:
+    - id: activate-workspaces
+      description: Acquire new workspaces that complete a defined, meaningful RoundtableCI workflow.
+  # Open decision 08: no publishing channel is chosen yet.
+  channels: []

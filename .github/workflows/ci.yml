@@ -8,6 +8,21 @@ on:
 jobs:
   go:
     runs-on: ubuntu-latest
+    # The storage tests run against a real PostgreSQL with pgvector.
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: merlin
+          POSTGRES_PASSWORD: merlin
+          POSTGRES_DB: merlin
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U merlin -d merlin"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      MERLIN_TEST_DATABASE_URL: postgres://merlin:merlin@localhost:5432/merlin?sslmode=disable
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
@@ -21,5 +36,7 @@ jobs:
         run: go build ./...
       - name: test
         run: go test ./...
+      - name: validate configs
+        run: go run ./cmd/merlinctl validate configs
       - name: compose config
         run: docker compose -f deploy/docker-compose.yml config -q
