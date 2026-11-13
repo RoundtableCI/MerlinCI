@@ -90,9 +90,9 @@ These are in the role files under `configs/roles/logical/`. The deck gives no fi
 
 ## H. On your machine
 
-- [ ] **Commit and push the work.** Nothing has been committed since the scaffold.
-- [ ] **Check the automated checks on GitHub.** The CI file now starts PostgreSQL for the storage
-      tests. That change has not run on GitHub yet.
+- [x] **Commit and push the work.** Pushed to the branch `first-release-backend`.
+- [x] **Check the automated checks on GitHub.** They passed on pull request #1.
+- [ ] **Review and merge pull request #1.** The work is not on `main` until it is merged.
 - [ ] **Know what is running in Docker.** Three local containers were started for testing:
       PostgreSQL (port 55432), Temporal (7233) and object storage (8333), each reachable from this
       machine only. Stop them with

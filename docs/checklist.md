@@ -17,7 +17,7 @@ that need a person are also in [handjobs.md](../handjobs.md), with the placehold
   keys. In every test the model, the search provider and the web are stand-ins.
 - Nothing is published anywhere. Distribution prepares a package for a person to publish.
 - The dashboard is not started.
-- None of this work is committed to git yet.
+- The work is in pull request #1, waiting to be reviewed and merged.
 
 ## 1. Decisions the team has to make (deck slide 18)
 
@@ -137,7 +137,7 @@ Goal: one agent takes a task, uses a tool, stores a validated artifact and recov
 - [ ] Budget alerts delivered to a person (email or chat)
 - [ ] Redis for caching (the local services file starts it; nothing uses it yet)
 - [ ] Metrics for Prometheus and a Grafana dashboard
-- [ ] Automated checks confirmed green on GitHub with the new service steps
+- [x] Automated checks confirmed green on GitHub with the new service steps
 - [ ] Tests run once under the race detector (needs a C compiler this machine lacks)
 
 ### Step 8. Ship the Market Researcher (phase 01)
@@ -235,7 +235,7 @@ To be built together. Nothing is started. The API it will use exists.
 
 ## 10. Housekeeping
 
-- [ ] Commit the work so far
+- [x] Commit the work so far (pull request #1, not yet merged)
 - [ ] Add a decision record in `docs/decisions` for each decision as it is made
 
 ## The measure of success
