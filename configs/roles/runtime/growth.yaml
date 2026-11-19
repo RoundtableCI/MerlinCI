@@ -1,0 +1,6 @@
+apiVersion: merlinci/v1alpha1
+kind: RuntimeRole
+metadata:
+  name: growth
+spec:
+  responsibility: Distribution and leads. Runs experiments judged on activation rather than page views.

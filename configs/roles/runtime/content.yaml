@@ -1,0 +1,6 @@
+apiVersion: merlinci/v1alpha1
+kind: RuntimeRole
+metadata:
+  name: content
+spec:
+  responsibility: Content and SEO. Builds research-backed articles, posts and email, each traced to its sources.

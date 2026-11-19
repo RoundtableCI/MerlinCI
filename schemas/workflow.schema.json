@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MerlinCI workflow template",
+  "description": "An ordered set of steps, each run by a role or checked by an evaluator. Deck slides 9 and 14.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "merlinci/v1alpha1" },
+    "kind": { "const": "Workflow" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "$ref": "#/$defs/id" },
+        "description": { "type": "string" }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["steps"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "description"],
+            "properties": {
+              "id": { "$ref": "#/$defs/id" },
+              "description": { "type": "string", "minLength": 1 },
+              "role": {
+                "description": "A logical role, or a runtime role when no logical role has been split out.",
+                "$ref": "#/$defs/id"
+              },
+              "evaluator": {
+                "description": "An independent evaluation stage, such as brand-guardian.",
+                "$ref": "#/$defs/id"
+              },
+              "needs": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+              "produces": { "description": "Artifact kind this step stores.", "$ref": "#/$defs/id" }
+            },
+            "oneOf": [{ "required": ["role"] }, { "required": ["evaluator"] }]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" }
+  }
+}

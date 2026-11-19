@@ -1,0 +1,6 @@
+apiVersion: merlinci/v1alpha1
+kind: RuntimeRole
+metadata:
+  name: creative
+spec:
+  responsibility: Plans the assets a campaign needs, including graphics and video scripts.

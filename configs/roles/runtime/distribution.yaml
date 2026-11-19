@@ -1,0 +1,6 @@
+apiVersion: merlinci/v1alpha1
+kind: RuntimeRole
+metadata:
+  name: distribution
+spec:
+  responsibility: Publishes approved assets through official APIs, only inside the permission policy.

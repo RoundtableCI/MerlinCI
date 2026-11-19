@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MerlinCI budget document",
+  "description": "Spend is capped before it is spent. Agents can never raise their own limit. Deck slide 15.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "merlinci/v1alpha1" },
+    "kind": { "const": "Budget" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "description": { "type": "string" }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["currency", "limits", "alertThresholds", "atLimit"],
+      "properties": {
+        "currency": { "description": "ISO 4217 code.", "type": "string", "pattern": "^[A-Z]{3}$" },
+        "limits": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["category", "period", "amount"],
+            "properties": {
+              "category": { "enum": ["inference", "research"] },
+              "period": { "enum": ["day", "month"] },
+              "amount": {
+                "description": "Decimal string in the budget currency, at most two decimal places.",
+                "type": "string",
+                "pattern": "^[0-9]+(\\.[0-9]{1,2})?$"
+              }
+            }
+          }
+        },
+        "alertThresholds": {
+          "description": "Fractions of a limit at which an alert is raised.",
+          "type": "array",
+          "items": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 }
+        },
+        "exchangeRates": {
+          "description": "Units of the budget currency per one unit of another currency, as decimal strings. Needed when a provider bills in a currency other than the budget currency.",
+          "type": "object",
+          "propertyNames": { "pattern": "^[A-Z]{3}$" },
+          "additionalProperties": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]{1,4})?$" }
+        },
+        "unitCosts": {
+          "description": "What one call of a paid action costs, in the budget currency, keyed by action name. Charged to the research budget before the call is made.",
+          "type": "object",
+          "additionalProperties": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]{1,2})?$" }
+        },
+        "atLimit": {
+          "description": "Hard stop or degraded service at the limit.",
+          "enum": ["stop", "degrade"]
+        }
+      }
+    }
+  }
+}

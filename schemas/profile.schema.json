@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MerlinCI profile documents",
+  "description": "Company and approved product profile (kind: Profile) and audience hypotheses (kind: Audiences). Deck slides 4 and 7.",
+  "oneOf": [{ "$ref": "#/$defs/Profile" }, { "$ref": "#/$defs/Audiences" }],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "$ref": "#/$defs/id" },
+        "description": { "type": "string" }
+      }
+    },
+    "Profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apiVersion", "kind", "metadata", "spec"],
+      "properties": {
+        "apiVersion": { "const": "merlinci/v1alpha1" },
+        "kind": { "const": "Profile" },
+        "metadata": { "$ref": "#/$defs/metadata" },
+        "spec": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["approval", "company", "products", "claims", "northStar", "objectives", "channels"],
+          "properties": {
+            "approval": {
+              "description": "Nothing public is produced from a draft profile. A person approves the profile; agents never do.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["status"],
+              "properties": {
+                "status": { "enum": ["draft", "approved"] },
+                "approvedBy": { "type": "string", "minLength": 1 },
+                "approvedOn": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}" }
+              },
+              "if": { "properties": { "status": { "const": "approved" } } },
+              "then": { "required": ["approvedBy", "approvedOn"] },
+              "else": { "not": { "anyOf": [{ "required": ["approvedBy"] }, { "required": ["approvedOn"] }] } }
+            },
+            "company": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name"],
+              "properties": {
+                "name": { "type": "string", "minLength": 1 },
+                "url": { "type": "string", "pattern": "^https://" }
+              }
+            },
+            "products": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "name", "summary", "features"],
+                "properties": {
+                  "id": { "$ref": "#/$defs/id" },
+                  "name": { "type": "string", "minLength": 1 },
+                  "summary": { "type": "string", "minLength": 1 },
+                  "features": {
+                    "description": "The only product features agents may state. Agents never infer features from old copy.",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["id", "statement"],
+                      "properties": {
+                        "id": { "$ref": "#/$defs/id" },
+                        "statement": { "type": "string", "minLength": 1 }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "claims": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["approved", "prohibited"],
+              "properties": {
+                "approved": {
+                  "description": "Claims that may be made publicly. Each needs a specific, reproducible evaluation as evidence.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["id", "statement", "evidence"],
+                    "properties": {
+                      "id": { "$ref": "#/$defs/id" },
+                      "statement": { "type": "string", "minLength": 1 },
+                      "evidence": { "type": "string", "minLength": 1 }
+                    }
+                  }
+                },
+                "prohibited": {
+                  "description": "Claims that must never be made.",
+                  "type": "array",
+                  "items": { "type": "string", "minLength": 1 }
+                }
+              }
+            },
+            "northStar": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["metric", "activationEvent", "decides", "diagnosticOnly"],
+              "properties": {
+                "metric": { "type": "string", "minLength": 1 },
+                "activationEvent": {
+                  "description": "The event that counts as activation. Null until decided (open decision 05).",
+                  "type": ["string", "null"]
+                },
+                "decides": { "type": "array", "items": { "type": "string" } },
+                "diagnosticOnly": { "type": "array", "items": { "type": "string" } }
+              }
+            },
+            "objectives": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "description"],
+                "properties": {
+                  "id": { "$ref": "#/$defs/id" },
+                  "description": { "type": "string", "minLength": 1 }
+                }
+              }
+            },
+            "channels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "type", "enabled"],
+                "properties": {
+                  "id": { "$ref": "#/$defs/id" },
+                  "type": { "type": "string", "minLength": 1 },
+                  "handle": { "type": "string" },
+                  "enabled": { "type": "boolean" }
+                }
+              }
+            },
+            "voice": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "summary": { "type": "string" },
+                "rules": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Audiences": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["apiVersion", "kind", "metadata", "spec"],
+      "properties": {
+        "apiVersion": { "const": "merlinci/v1alpha1" },
+        "kind": { "const": "Audiences" },
+        "metadata": { "$ref": "#/$defs/metadata" },
+        "spec": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["segments", "competitors"],
+          "properties": {
+            "segments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "description", "status"],
+                "properties": {
+                  "id": { "$ref": "#/$defs/id" },
+                  "description": { "type": "string", "minLength": 1 },
+                  "status": {
+                    "description": "Hypotheses to validate, not facts.",
+                    "enum": ["hypothesis", "validated", "rejected"]
+                  }
+                }
+              }
+            },
+            "competitors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "name"],
+                "properties": {
+                  "id": { "$ref": "#/$defs/id" },
+                  "name": { "type": "string", "minLength": 1 },
+                  "url": { "type": "string", "pattern": "^https://" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

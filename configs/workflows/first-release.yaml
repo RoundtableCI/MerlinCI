@@ -1,0 +1,41 @@
+# The first-release workflow: one workflow, end to end (deck slide 14).
+# Slide steps 02 (evidence and sources are saved) and 08 (the run is inspectable,
+# costed and recoverable) are properties of every step, not steps of their own.
+#
+# Each role step is a task of its own. A step builds on the artifacts of the
+# steps it needs, and a failed step or a rejecting gate stops everything after it.
+apiVersion: merlinci/v1alpha1
+kind: Workflow
+metadata:
+  name: first-release
+  description: From a public opportunity to a prepared, checked and recorded piece of content.
+spec:
+  steps:
+    - id: find-opportunity
+      description: Researcher finds a public opportunity and saves its evidence and sources.
+      role: market-researcher
+      produces: market-opportunity
+    - id: write-brief
+      description: Strategist writes a campaign brief.
+      role: campaign-strategist
+      needs: [find-opportunity]
+      produces: campaign-brief
+    - id: create-asset
+      description: Content role creates an asset.
+      role: content-writer
+      needs: [write-brief]
+      produces: content-asset
+    - id: brand-check
+      description: Brand Guardian checks accuracy and quality, independently of the writer.
+      evaluator: brand-guardian
+      needs: [create-asset]
+    - id: distribute
+      description: Distribution prepares the approved asset for publication. A person publishes it.
+      role: distribution-manager
+      needs: [brand-check]
+      produces: publication
+    - id: record-results
+      description: Analytics records the campaign and how it is to be measured.
+      role: campaign-analyst
+      needs: [distribute]
+      produces: campaign-report

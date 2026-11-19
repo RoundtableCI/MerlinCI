@@ -3,7 +3,7 @@
 RoundtableCI is customer one, not a dependency (slide 7). MerlinCI markets RoundtableCI first;
 other companies run their own by supplying their own version of these files.
 
-Planned files:
+Files:
 
 | File | Contents | Deck |
 |---|---|---|
@@ -11,6 +11,7 @@ Planned files:
 | `audiences.yaml` | Audience hypotheses (to validate, not facts) | slide 7 |
 | `policy.yaml` | Autonomy tiers per action and channel | slide 11 |
 | `budget.yaml` | ₹150/day inference cap, ₹3,000/month inference, ₹500/month research APIs; alerts at 70% and 90% | slide 15 |
+| `models.yaml` | The model allowlist and prices. A placeholder until decision 11 | slides 12, 15 |
 
 Audience hypotheses from the deck:
 

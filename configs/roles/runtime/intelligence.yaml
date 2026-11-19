@@ -1,0 +1,6 @@
+apiVersion: merlinci/v1alpha1
+kind: RuntimeRole
+metadata:
+  name: intelligence
+spec:
+  responsibility: Research. Validates and ranks the opportunities Market Radar detects.

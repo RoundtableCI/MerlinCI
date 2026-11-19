@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MerlinCI model allowlist",
+  "description": "The only models MerlinCI may call, with the prices used to cap spend before each call. Deck slides 12 and 15.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "merlinci/v1alpha1" },
+    "kind": { "const": "Models" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "description": { "type": "string" }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "currency", "default", "models"],
+      "properties": {
+        "provider": { "description": "The model provider, such as openrouter.", "type": "string", "minLength": 1 },
+        "currency": { "description": "The currency the provider bills in. ISO 4217 code.", "type": "string", "pattern": "^[A-Z]{3}$" },
+        "default": { "description": "The model a role uses when it names none.", "type": "string", "minLength": 1 },
+        "evaluatorModel": { "description": "The model evaluators such as Brand Guardian use. Omit to use the default.", "type": "string", "minLength": 1 },
+        "models": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "inputPerMillionTokens", "outputPerMillionTokens"],
+            "properties": {
+              "id": { "description": "The provider's model identifier.", "type": "string", "minLength": 1 },
+              "inputPerMillionTokens": {
+                "description": "Price in the provider's currency, as a decimal string.",
+                "type": "string",
+                "pattern": "^[0-9]+(\\.[0-9]{1,6})?$"
+              },
+              "outputPerMillionTokens": {
+                "type": "string",
+                "pattern": "^[0-9]+(\\.[0-9]{1,6})?$"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
