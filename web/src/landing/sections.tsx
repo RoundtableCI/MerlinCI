@@ -397,7 +397,7 @@ export function Foot() {
           <a className="link" href={`${REPO}/blob/main/docs/project-guide.md`}>Project guide</a>
           <Link className="link" to="/app">Console</Link>
         </nav>
-        <span>Set in Cormorant, Garamond and Sometype Mono</span>
+        <span>Set in Gambarino and General Sans</span>
         <span>First-release backend, November 2026</span>
       </div>
     </footer>

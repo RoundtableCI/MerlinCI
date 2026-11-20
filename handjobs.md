@@ -119,7 +119,7 @@ Built as a design only, on sample data, not connected to the backend. See `web/R
 
 - [ ] **Look at the design and say what to change.** Colours, fonts and sizes are in
       `web/src/styles/tokens.css`. Current choices: putty paper, black ink, one teal accent,
-      Cormorant, EB Garamond and Sometype Mono, the same family as RoundtableCI (free, from Google Fonts).
+      Gambarino and General Sans (free, from Fontshare), with JetBrains Mono for code.
 - [ ] **Confirm the logo mark.** Placeholder: a ring with one open seat and a teal dot.
 - [ ] **Decide the contact in the footer.** Placeholder: the GitHub repository address, which is
       private today, so the link fails for outsiders. The "Read the project guide" links point there too.

@@ -6,8 +6,7 @@
 .console .muted { color: var(--muted); }
 .console .num { font-variant-numeric: tabular-nums; }
 .console b { font-weight: 600; }
-.console .mono, .console .num, .console td.n, .console th, .console .pill, .console time { font-family: var(--font-mono); font-size: 13px; }
-.console h1, .console h2 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.01em; }
+.console .mono { font-family: var(--font-mono); font-size: 13px; }
 
 /* ---------- shell ---------- */
 .console .sidebar { border-right: 1px solid var(--border); padding: 20px 12px 16px; }

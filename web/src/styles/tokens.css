@@ -14,10 +14,11 @@
   --brand-teal-deep: #1b5463;
   --brand-signal: #b4391f;       /* "needs a person": used small, and nowhere else */
 
-  /* The same family as RoundtableCI: Cormorant for display, Garamond for text, Sometype Mono for labels and figures. */
-  --font-display: "Cormorant", "Cormorant Garamond", Georgia, serif;
-  --font-text: "EB Garamond", Garamond, Georgia, serif;
-  --font-mono: "Sometype Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  /* Kin to RoundtableCI (a serif for display, a mono for code) but its own faces:
+     Gambarino is sharper and heavier than Roundtable's Cormorant, and the text is a plain sans. */
+  --font-display: "Gambarino", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-text: "General Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 
 /* ---------- 2. Landing page ---------- */
@@ -73,7 +74,7 @@
   --chart-mark: var(--text); --chart-span: 0.06; --axis-ink: var(--muted);
 
   --font: var(--font-text);
-  --fs-title: 32px; --fs-section: 21px; --fs-kpi: 28px; --fs-body: 16px; --fs-small: 13px;
+  --fs-title: 24px; --fs-section: 16px; --fs-kpi: 28px; --fs-body: 14px; --fs-small: 12px;
   --card-pad: 20px;
   --radius-card: 8px;
   --radius-control: 6px;

@@ -21,14 +21,14 @@ html[data-surface="site"] body { overflow-x: clip; }
 .cols { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(12px, 1.6vw, 24px); }
 .section { padding-top: var(--section-gap); }
 
-.display, .head { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.025em; line-height: 0.92; }
+.display, .head { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; line-height: 0.92; }
 .site em { font-style: italic; }
 .display { font-size: var(--step-display); }
 .head { font-size: var(--step-head); line-height: 0.96; text-wrap: balance; }
 .lead { font-size: var(--step-lead); line-height: 1.35; }
 .small { font-size: var(--step-small); line-height: 1.45; }
 .soft { color: var(--page-soft); }
-.statement { font-family: var(--font-display); font-size: clamp(1.7rem, 1.1rem + 2vw, 2.6rem); line-height: 1.2; font-weight: 500; letter-spacing: -0.015em; }
+.statement { font-size: clamp(1.5rem, 1rem + 1.75vw, 2.25rem); line-height: 1.24; font-weight: 500; letter-spacing: -0.015em; }
 
 /* links: an underline that draws in */
 .link { position: relative; padding-bottom: 3px; }
@@ -46,9 +46,9 @@ html[data-surface="site"] body { overflow-x: clip; }
 
 /* ---------- top line ---------- */
 .top { position: absolute; left: 0; right: 0; top: 0; z-index: 600; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 22px; }
-.small, .ui, .tries button, .bar-seg span, .verdict dl, .foot-meta, .status-list h3, .facts dt { font-family: var(--font-mono); }
+.tries button, .verdict dd, .slot-chip i { font-family: var(--font-mono); }
 .top nav { display: flex; align-items: center; gap: clamp(16px, 2.4vw, 36px); font-size: var(--step-small); }
-.top nav a { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; }
+.top nav a { font-size: 15px; }
 @media (max-width: 720px) { .top nav a.wide { display: none; } }
 
 /* ---------- hero ---------- */

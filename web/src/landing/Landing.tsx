@@ -16,7 +16,7 @@ export default function Landing() {
   useRise(root);
   useEffect(() => {
     document.documentElement.dataset.surface = 'site';
-    document.title = 'MerlinCI: marketing that shows its work';
+    document.title = 'MerlinCI: a marketing team for your brand';
   }, []);
 
   return (

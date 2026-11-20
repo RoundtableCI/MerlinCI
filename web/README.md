@@ -19,7 +19,7 @@ npm run build      # type-check, then build into dist/
 
 Edit `src/styles/tokens.css`. Section 1 is the brand (paper, ink, the teal accent, the signal
 colour, the two typefaces). Sections 2 and 3 map the brand onto the landing page and the console.
-The fonts (Cormorant, EB Garamond, Sometype Mono: the RoundtableCI family) are loaded in `index.html`.
+The fonts (Gambarino, General Sans, JetBrains Mono for code) are loaded in `index.html`.
 
 | To change | Look in |
 |---|---|
@@ -33,9 +33,9 @@ The fonts (Cormorant, EB Garamond, Sometype Mono: the RoundtableCI family) are l
 ## Motion
 
 - The scroll story at the top of the landing page (`src/story/`): a sticky stage eight screens
-  tall. Scroll position becomes one number and the six roles glide between five scenes.
+  tall. Scroll position becomes one number and six cards (one brand's marketing) move through six scenes: found, made, held at the gate, measured, and the files a brand brings.
   `MerlinStory.tsx` holds the words, the scenes and where each role sits; `scroll-story.css`
-  holds the look; `story-math.ts`, `useScrollStory.ts` and `Rings.tsx` are the engine.
+  holds the look; `story-math.ts` and `useScrollStory.ts` are the engine.
   In development, `?p=0.48` freezes the story at a point and `?t=3` freezes time.
 - Smooth scrolling: Lenis, driven by GSAP's clock (`src/lib/motion.ts`).
 - Scroll animation: GSAP ScrollTrigger. The campaign bar pins and fills as you scroll.
