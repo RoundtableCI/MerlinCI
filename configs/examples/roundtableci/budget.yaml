@@ -22,8 +22,11 @@ spec:
   # operator and rounded up so that spend is over-counted rather than under-counted.
   # Keep it at or above the real rate.
   # What one web search costs, charged to the research budget before the search runs.
-  # PLACEHOLDER pending decision 07: Brave Search at about $5 per 1,000 queries.
+  # PLACEHOLDER pending decision 07: Tavily's free plan, 1,000 searches a month at no cost.
+  # The real cost is zero; this nominal ₹0.50 makes the ₹500 research budget stop at
+  # 1,000 searches, the same as the free plan. Tavily's paid rate is about $0.008 a search
+  # (₹0.72); raise this to at least that if the account is ever moved to a paid plan.
   unitCosts:
-    research.search: "0.45"
+    research.search: "0.50"
   exchangeRates:
     USD: "90.00"

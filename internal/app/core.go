@@ -128,10 +128,17 @@ func Open(ctx context.Context, env Env, opts Options) (*Core, error) {
 
 	searcher := opts.Searcher
 	if searcher == nil {
-		if !creds.Has(credentials.BraveSearch) {
-			log.Warn("no search credential: web search will fail until it is set", "name", credentials.BraveSearch)
+		// Search provider placeholder pending decision 07: Tavily (free plan,
+		// no card). Brave is used instead only when its key alone is set.
+		switch {
+		case creds.Has(credentials.Tavily):
+			searcher = research.NewTavily("", creds.Getter(credentials.Tavily), nil)
+		case creds.Has(credentials.BraveSearch):
+			searcher = research.NewBrave("", creds.Getter(credentials.BraveSearch), nil)
+		default:
+			log.Warn("no search credential: web search will fail until it is set", "name", credentials.Tavily)
+			searcher = research.NewTavily("", creds.Getter(credentials.Tavily), nil)
 		}
-		searcher = research.NewBrave("", creds.Getter(credentials.BraveSearch), nil)
 	}
 	fetcher := opts.Fetcher
 	if fetcher == nil {

@@ -9,6 +9,7 @@ import (
 const (
 	OpenRouter  = "OPENROUTER_API_KEY"
 	BraveSearch = "BRAVE_SEARCH_API_KEY"
+	Tavily      = "TAVILY_API_KEY"
 )
 
 // Store is the one place credentials are read from. Connectors receive a
