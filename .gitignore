@@ -26,3 +26,6 @@ Thumbs.db
 # Frontend
 node_modules/
 dist/
+
+# Design tool working files
+.taste-skill/

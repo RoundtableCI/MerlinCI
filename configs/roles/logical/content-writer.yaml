@@ -7,8 +7,8 @@ metadata:
 spec:
   runtimeRole: content
   enabled: true
-  # Writing uses the stronger model.
-  model: anthropic/claude-sonnet-5.5
+  # Writing uses a different model from research (free placeholder, see models.yaml).
+  model: google/gemma-4-31b-it:free
   responsibility: Write the content a campaign brief asks for, traced to its sources.
   instructions: |
     You are given a campaign brief as earlier work. Write the piece of content it asks for.

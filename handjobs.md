@@ -7,20 +7,29 @@ Tick an item when it is done. Items are grouped by what they unblock. Status as 
 
 ## A. Needed before anything runs with a real AI model
 
-- [ ] **Create an OpenRouter account and API key.** Put the key in `.env` as `OPENROUTER_API_KEY`.
+- [x] **Create an OpenRouter account and API key.** Done 19 Nov 2026: key is in `.env` and
+      OpenRouter accepts it. The account is on the free tier (no credits), so the paid Claude
+      models on the allowlist will be refused until credits are added.
+- [ ] **Add credits to the OpenRouter account.** Needed before the first real run.
+- Earlier note: put the key in `.env` as `OPENROUTER_API_KEY`.
       Until then every run stops at once with "OPENROUTER_API_KEY is not set", and the OpenRouter
       connection has only been tested against a local imitation.
-- [ ] **Choose an API token.** Put a long random secret (24 characters or more) in `.env` as
-      `MERLIN_API_TOKEN`. The API refuses to start without one. Anyone who has it can start work
+- [x] **Choose an API token.** Done 19 Nov 2026: a random 64-character token was generated into
+      `.env` as `MERLIN_API_TOKEN`. The API refuses to start without one. Anyone who has it can start work
       and approve actions, so treat it like a password.
 - [ ] **Confirm the model allowlist (decision 11).**
-      Placeholder in `configs/examples/roundtableci/models.yaml`: `anthropic/claude-haiku-5.5` as
+      Since 19 Nov 2026 the placeholder is two free OpenRouter models (Nemotron 3 Ultra for most
+      work, Gemma 4 31B for writing and Brand Guardian), so testing costs nothing; free accounts
+      get 50 requests a day. The paid models below are kept in that file to switch back to.
+      Earlier placeholder in `configs/examples/roundtableci/models.yaml`: `anthropic/claude-haiku-5.5` as
       the default ($0.10 in, $0.50 out per million tokens) and `anthropic/claude-sonnet-5.5` for
       writing and for Brand Guardian ($2 in, $10 out). Prices were read from OpenRouter's public
       list on 13 Nov 2026 and are fixed in that file. They must stay at or above what OpenRouter
       charges, or the budget will under-reserve; update them when OpenRouter's prices change.
 - [ ] **Confirm the exchange rate.** Placeholder in `budget.yaml`: ₹90 per US dollar, rounded up on
       purpose so spend is over-counted rather than under-counted.
+- [x] **First real run done 19 Nov 2026** (Market Researcher, free Nemotron model, Tavily search,
+      10 model calls, 4 sources, $0 charged). Still to do: a person reads and judges the output.
 - [ ] **Do the first real run and read the output.** Start the services, then
       `merlinctl run market-researcher -input '{"topic":"..."}' -wait`. Every test so far used a
       scripted stand-in for the model, so nobody has yet seen what a real model does with these
@@ -28,14 +37,15 @@ Tick an item when it is done. Items are grouped by what they unblock. Status as 
 
 ## B. Needed before the Market Researcher can search the web
 
-- [ ] **Choose the search provider (decision 07).** Placeholder: Brave Search, through its
-      official API. The connector is written but has only been tested against a local imitation.
-- [ ] **Create the search account and API key.** Put the key in `.env` as `BRAVE_SEARCH_API_KEY`.
-      Until then a search fails with "BRAVE_SEARCH_API_KEY is not set". Reading a page by URL
-      needs no key.
-- [ ] **Confirm the cost per search.** Placeholder in `budget.yaml`: ₹0.45 per search (about $5 per
-      1,000 queries). Each search is charged to the ₹500 monthly research budget before it runs.
-      Set this to what the chosen plan really costs.
+- [x] **Search provider placeholder (decision 07).** Since 19 Nov 2026: Tavily, because its free
+      plan (1,000 searches a month) needs no card; Brave asked for payment and its site does not
+      load on this network. The Brave connector is kept and is used only if `TAVILY_API_KEY` is
+      unset and `BRAVE_SEARCH_API_KEY` is set. The team still has to confirm decision 07.
+- [x] **Search API key.** `TAVILY_API_KEY` is in `.env`; a live search through the new connector
+      returned real results on 19 Nov 2026.
+- [ ] **Confirm the cost per search.** Placeholder in `budget.yaml`: a nominal ₹0.50 per search, so
+      the ₹500 research budget stops at 1,000 searches, matching the free plan. Real cost is zero.
+      Raise it to at least ₹0.72 (Tavily's paid rate) if the account ever moves to a paid plan.
 
 ## C. Needed before anything public is produced
 
@@ -102,3 +112,20 @@ These are in the role files under `configs/roles/logical/`. The deck gives no fi
       `MERLIN_DATABASE_URL`.
 - [ ] **Docker Hub downloads fail on this network.** Images were pulled from Google's mirror
       (`mirror.gcr.io/...`) and tagged locally. A new machine on this network needs the same.
+
+## I. The landing page and console (web/), added 19 Nov 2026
+
+Built as a design only, on sample data, not connected to the backend. See `web/README.md`.
+
+- [ ] **Look at the design and say what to change.** Colours, fonts and sizes are in
+      `web/src/styles/tokens.css`. Current choices: putty paper, black ink, one teal accent,
+      Gambarino and General Sans (free, from Fontshare), with JetBrains Mono for code.
+- [ ] **Confirm the logo mark.** Placeholder: a ring with one open seat and a teal dot.
+- [ ] **Decide the contact in the footer.** Placeholder: the GitHub repository address, which is
+      private today, so the link fails for outsiders. The "Read the project guide" links point there too.
+- [ ] **Check the landing page's words.** Every fact is from `docs/project-guide.md`; the wording is mine.
+- [ ] **Replace the sample data.** Campaigns, runs, amounts and sources in `web/src/data/sample.ts`
+      are invented. In the sample a writer asks to raise its cap (`budget.increase`); no role in
+      the real backend has a tool for that yet.
+- [ ] **Connect the console to the API**, and add sign-in. Placeholder: `web/src/data/api.ts`
+      answers from the sample.

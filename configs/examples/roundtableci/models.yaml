@@ -2,8 +2,16 @@
 # not listed here. The prices are what the budget uses to cap a call before it is made, so
 # they must be at or above what the provider charges.
 #
-# PLACEHOLDER pending decision 11. Prices are US dollars per million tokens, read from
-# OpenRouter's public model list on 13 Nov 2026.
+# PLACEHOLDER pending decision 11. Since 19 Nov 2026 this uses OpenRouter's free models, so
+# testing costs nothing: OpenRouter charges $0 for these. The prices below are NOT real: they
+# are nominal figures kept so the per-task and monthly caps still limit how much work a run
+# can do (a price of zero would make every cap meaningless, and validation refuses it).
+# OpenRouter reports a cost of 0 for free models, and the gateway then prices the call from
+# its tokens at these nominal rates, so `merlinctl budget` shows notional spend, not money.
+#
+# Free-model limits: OpenRouter allows a free-tier account 50 requests a day across all
+# free models, and free models can be slow, rate-limited or withdrawn without notice.
+# Prompts sent to free models may be logged by their providers.
 apiVersion: merlinci/v1alpha1
 kind: Models
 metadata:
@@ -11,15 +19,21 @@ metadata:
 spec:
   provider: openrouter
   currency: USD
-  default: anthropic/claude-haiku-5.5
-  # Brand Guardian reviews with the stronger model.
-  evaluatorModel: anthropic/claude-sonnet-5.5
+  default: nvidia/nemotron-3-ultra-550b-a55b:free
+  # Brand Guardian reviews with a different model from the one that does most of the work.
+  evaluatorModel: google/gemma-4-31b-it:free
   models:
-    # Research, ranking and analysis.
-    - id: anthropic/claude-haiku-5.5
+    # Research, ranking and analysis. Free; nominal price for the caps only.
+    - id: nvidia/nemotron-3-ultra-550b-a55b:free
       inputPerMillionTokens: "0.10"
       outputPerMillionTokens: "0.50"
-    # Writing and review.
-    - id: anthropic/claude-sonnet-5.5
-      inputPerMillionTokens: "2.00"
-      outputPerMillionTokens: "10.00"
+    # Writing and review. Free; nominal price for the caps only.
+    - id: google/gemma-4-31b-it:free
+      inputPerMillionTokens: "0.10"
+      outputPerMillionTokens: "0.50"
+
+# Paid models used before 19 Nov 2026, to restore once the account has credits.
+# Prices were read from OpenRouter's public list on 13 Nov 2026.
+#   default: anthropic/claude-haiku-5.5         ($0.10 in, $0.50 out per million tokens)
+#   evaluatorModel: anthropic/claude-sonnet-5.5 ($2.00 in, $10.00 out)
+#   content-writer role model: anthropic/claude-sonnet-5.5

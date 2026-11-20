@@ -1,0 +1,88 @@
+/* MerlinCI design tokens.
+   This is the one file to edit when you want to change how MerlinCI looks.
+   Section 1 is the brand. Sections 2 and 3 map the brand onto the landing page and the console,
+   so changing a value in section 1 changes both. */
+
+/* ---------- 1. The brand ---------- */
+:root {
+  --brand-paper: #dedad3;        /* the warm putty ground of the landing page */
+  --brand-paper-deep: #d3cec6;   /* one tone step down: fields and tiles */
+  --brand-paper-light: #e9e6e0;  /* one tone step up */
+  --brand-ink: #0a0a0a;          /* all type and the main shapes */
+  --brand-ink-soft: #5c5852;     /* secondary notes only */
+  --brand-teal: #256f82;         /* the one accent: the action, the main data element */
+  --brand-teal-deep: #1b5463;
+  --brand-signal: #b4391f;       /* "needs a person": used small, and nowhere else */
+
+  /* Kin to RoundtableCI (a serif for display, a mono for code) but its own faces:
+     Gambarino is sharper and heavier than Roundtable's Cormorant, and the text is a plain sans. */
+  --font-display: "Gambarino", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-text: "General Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+/* ---------- 2. Landing page ---------- */
+:root {
+  --paper: var(--brand-paper);
+  --field: var(--brand-paper-deep);
+  --lift: var(--brand-paper-light);
+  --page-ink: var(--brand-ink);
+  --page-soft: var(--brand-ink-soft);
+  --page-accent: var(--brand-teal);
+
+  /* five type steps, and nothing between them */
+  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --step-head: clamp(2.5rem, 1.3rem + 4.4vw, 5.5rem);
+  --step-display: clamp(3.4rem, 10.6vw, 12.5rem);
+
+  --margin: clamp(16px, 2vw, 28px);       /* the one pair of outer margins */
+  --section-gap: clamp(96px, 13vw, 200px);
+  --radius: 14px;                          /* the one corner radius on the page */
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ---------- 3. Console (names come from the app kit in app-kit.css) ---------- */
+:root {
+  --ground: #f0efec;             /* the paper, lightened for long sessions */
+  --surface: #ffffff;
+  --raised: #f5f4f2;
+  --active: #e6e4e0;
+  --border: #e3e1dc;
+  --rule: #efede9;
+  --control: #cfccc5;
+  --text: var(--brand-ink);
+  --muted: #5c5852;
+  --faint: #6b6660;
+  --accent: var(--brand-teal);
+  --primary: #111110;
+  --primary-ink: #ffffff;
+  --positive: #1f6f4f;
+  --negative: var(--brand-signal);
+  --warning: #8a4b0f;
+  --pill-positive-bg: #dff3e7; --pill-positive-ink: #0e3a26;
+  --pill-negative-bg: #fbe9e4; --pill-negative-ink: #7a2412;
+  --pill-warning-bg: #fbf1dc; --pill-warning-ink: #6f3c0a;
+  --pill-neutral-bg: #e9e7e3; --pill-neutral-ink: #3b3834;
+  --chart-1: var(--brand-teal); --chart-2: #9dbec7; --chart-3: #8a4b0f; --chart-muted: #cfccc5;
+  --grid: #e9e7e2;
+
+  --ink: var(--text);
+  --chart-mark: var(--text); --chart-span: 0.06; --axis-ink: var(--muted);
+
+  --font: var(--font-text);
+  --fs-title: 24px; --fs-section: 16px; --fs-kpi: 28px; --fs-body: 14px; --fs-small: 12px;
+  --card-pad: 20px;
+  --radius-card: 8px;
+  --radius-control: 6px;
+  --control-height: 32px;
+  --row-height: 48px;
+  --nav-row: 32px;
+  --t-press: 120ms; --t-hover: 150ms; --t-ui: 200ms;
+  --sidebar-width: 240px;
+  --pad: 32px;
+  --gap: 16px;
+}
