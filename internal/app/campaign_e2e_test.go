@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"testing"
@@ -95,13 +96,20 @@ func TestFirstReleaseCampaign(t *testing.T) {
 		t.Errorf("gate step = %+v; want the writer's artifact and no task of its own", rec.State.Steps[3])
 	}
 
-	// The writer and both reviews used the stronger model; the rest the default.
+	// The writer used its own model and the three reviews the evaluator
+	// model; everything else the default. The models come from the
+	// configuration, which may give several of these the same model.
+	cfg := s.core.Config
+	wantModels := map[string]int{}
+	wantModels[cfg.Roles["content-writer"].Spec.Model]++
+	wantModels[cfg.Models.Spec.EvaluatorModel] += 3
+	wantModels[cfg.Models.Spec.Default] += 5
 	models := map[string]int{}
 	for _, req := range s.model.seen {
 		models[req.Model]++
 	}
-	if models["anthropic/claude-sonnet-5.5"] != 4 || models["anthropic/claude-haiku-5.5"] != 5 {
-		t.Errorf("models used = %v; want sonnet 4 times (writer and three reviews) and haiku 5 times", models)
+	if fmt.Sprint(models) != fmt.Sprint(wantModels) {
+		t.Errorf("models used = %v; want %v", models, wantModels)
 	}
 
 	// The last artifact traces back through the chain to the page the
@@ -185,5 +193,63 @@ func TestCampaignThatCannotRunIsRefused(t *testing.T) {
 	}
 	if s.model.n != 0 {
 		t.Error("a refused campaign reached the model")
+	}
+}
+
+// A failed campaign can be run again without repeating the steps that
+// finished. Here the check rejected the asset, so the asset is written
+// again: the rejected one is not shown to the check a second time.
+func TestRetryRunsOnlyWhatDidNotFinish(t *testing.T) {
+	s := newStack(t,
+		call("fetch-page", `{"url":"https://forum.example/thread"}`),
+		say("# Developers compare model outputs by hand\n\nEvidence: https://forum.example/thread"),
+		say("# Campaign: comparing model outputs\n\nEvidence: https://forum.example/thread"),
+		say("# The only tool you need\n\n## Sources\n- https://forum.example/thread"),
+		say(guardianPass),
+		say(guardianFail),
+		// The retry: create-asset and its review, the gate, distribute and
+		// its review, record-results.
+		say("# How developers compare model outputs\n\nMany diff answers by hand.\n\n## Sources\n- https://forum.example/thread"),
+		say(guardianPass),
+		say(guardianPass),
+		say("# Publication package: How developers compare model outputs\n\nChannel: to be decided\n\nutm_campaign=comparing-model-outputs"),
+		say(guardianPass),
+		say("# Campaign record: comparing model outputs\n\nResults: No results yet. Nothing has been published and no analytics source is connected."),
+	)
+
+	first := s.untilCampaign(s.startCampaign())
+	if first.State.Status != "failed" {
+		t.Fatalf("first campaign = %s (%s); want failed at the gate", first.State.Status, first.State.Reason)
+	}
+
+	var created struct {
+		ID      string `json:"id"`
+		RetryOf string `json:"retryOf"`
+	}
+	if code := s.request(http.MethodPost, "/v1/campaigns/"+first.ID+"/retry", nil, &created); code != http.StatusAccepted || created.RetryOf != first.ID || created.ID == first.ID {
+		t.Fatalf("retry: status %d, %+v", code, created)
+	}
+	rec := s.untilCampaign(created.ID)
+	if rec.State.Status != "succeeded" {
+		t.Fatalf("retried campaign = %+v", rec.State)
+	}
+	for i := 0; i < 2; i++ {
+		if rec.State.Steps[i] != first.State.Steps[i] {
+			t.Errorf("step %d = %+v; want it carried over unchanged: %+v", i, rec.State.Steps[i], first.State.Steps[i])
+		}
+	}
+	asset := rec.State.Steps[2]
+	if !strings.HasPrefix(asset.TaskID, created.ID+".") || asset.ArtifactID == "" || asset.ArtifactID == first.State.Steps[2].ArtifactID {
+		t.Errorf("asset step = %+v; want a new task and a new artifact, not the rejected one", asset)
+	}
+	if s.model.n != 12 {
+		t.Errorf("model calls = %d, want 12: six in the first campaign and six in the retry", s.model.n)
+	}
+
+	var out struct {
+		Error string `json:"error"`
+	}
+	if code := s.request(http.MethodPost, "/v1/campaigns/"+created.ID+"/retry", nil, &out); code != http.StatusConflict {
+		t.Errorf("retrying a campaign that succeeded: status %d (%s), want 409", code, out.Error)
 	}
 }

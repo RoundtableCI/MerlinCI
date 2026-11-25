@@ -7,8 +7,9 @@ metadata:
 spec:
   runtimeRole: content
   enabled: true
-  # Writing uses a different model from research (free placeholder, see models.yaml).
-  model: google/gemma-4-31b-it:free
+  # PLACEHOLDER since 25 Nov 2026: the same free model as research, because the free Gemma
+  # models were rate-limited at Google. Was google/gemma-4-31b-it:free (see models.yaml).
+  model: nvidia/nemotron-3-ultra-550b-a55b:free
   responsibility: Write the content a campaign brief asks for, traced to its sources.
   instructions: |
     You are given a campaign brief as earlier work. Write the piece of content it asks for.

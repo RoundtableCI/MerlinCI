@@ -34,7 +34,9 @@ func New(baseURL string, key func() (string, error), httpClient *http.Client) *C
 		baseURL = DefaultBaseURL
 	}
 	if httpClient == nil {
-		httpClient = &http.Client{Timeout: 2 * time.Minute}
+		// A long piece of writing from a slow model took more than two
+		// minutes on 25 Nov 2026, and a call cut off here is still charged.
+		httpClient = &http.Client{Timeout: 5 * time.Minute}
 	}
 	return &Client{baseURL: baseURL, key: key, http: httpClient}
 }

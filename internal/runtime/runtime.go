@@ -61,6 +61,11 @@ type Runtime struct {
 // before every call.
 const DefaultMaxOutputTokens = 4096
 
+// lastStepNote is shown to the model, with no tools offered, on the last
+// call its role allows.
+const lastStepNote = "This is your last step: no more tool calls are possible. " +
+	"Give your complete final output now, using only what you have already found."
+
 // maxToolResultBytes bounds how much of a tool result the model is shown.
 const maxToolResultBytes = 20_000
 
@@ -251,8 +256,17 @@ func (r *Runtime) loop(ctx context.Context, role config.RoleSpec, state State) (
 		if maxOutput == 0 {
 			maxOutput = DefaultMaxOutputTokens
 		}
+		messages, tools := state.Messages, r.toolSpecs(role)
+		if state.Step == role.Limits.MaxSteps-1 && len(tools) > 0 {
+			// The last call the role is allowed. Without this the model keeps
+			// working until the limit cuts it off and everything it gathered
+			// is lost. The note is not kept in the task's history.
+			messages = append(append([]provider.Message(nil), state.Messages...), provider.Message{Role: provider.RoleUser,
+				Content: lastStepNote})
+			tools = nil
+		}
 		res, err := r.Gateway.Complete(ctx, gateway.Request{
-			Request: provider.Request{Model: role.Model, Messages: state.Messages, Tools: r.toolSpecs(role), MaxOutputTokens: maxOutput},
+			Request: provider.Request{Model: role.Model, Messages: messages, Tools: tools, MaxOutputTokens: maxOutput},
 			CostCap: remaining,
 		})
 		if err != nil {

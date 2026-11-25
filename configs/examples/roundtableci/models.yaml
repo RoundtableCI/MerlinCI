@@ -20,8 +20,11 @@ spec:
   provider: openrouter
   currency: USD
   default: nvidia/nemotron-3-ultra-550b-a55b:free
-  # Brand Guardian reviews with a different model from the one that does most of the work.
-  evaluatorModel: google/gemma-4-31b-it:free
+  # Brand Guardian is meant to review with a different model from the one that does the work.
+  # PLACEHOLDER since 25 Nov 2026: it uses the same model, because the free Gemma models were
+  # rate-limited at Google (status 429). Switch back to google/gemma-4-31b-it:free, here and
+  # in configs/roles/logical/content-writer.yaml, when it answers again.
+  evaluatorModel: nvidia/nemotron-3-ultra-550b-a55b:free
   models:
     # Research, ranking and analysis. Free; nominal price for the caps only.
     - id: nvidia/nemotron-3-ultra-550b-a55b:free
