@@ -27,6 +27,7 @@ Operate a running MerlinCI (needs merlin-api; set MERLIN_API_URL and MERLIN_API_
   merlinctl campaign <workflow> [-input JSON] [-wait]   Start a campaign: a whole workflow
   merlinctl campaigns                   List recent campaigns
   merlinctl campaign-status <id>        Show where a campaign and each of its steps stand
+  merlinctl campaign-retry <id> [-wait] Run a failed campaign again from the step that failed
   merlinctl tasks                       List recent tasks
   merlinctl status <task>               Show where a task stands
   merlinctl events <task>               Show everything a task did, in order
@@ -67,6 +68,8 @@ func run(args []string, stdout, stderr io.Writer) int {
 		err = c.run(rest, stdout)
 	case "campaign":
 		err = c.campaign(rest, stdout)
+	case "campaign-retry":
+		err = c.campaignRetry(rest, stdout)
 	case "campaigns":
 		err = c.show(stdout, http.MethodGet, "/v1/campaigns", nil)
 	case "campaign-status":
@@ -333,6 +336,30 @@ func (c *client) campaign(args []string, stdout io.Writer) error {
 	if err != nil {
 		return err
 	}
+	return c.started(raw, *wait, stdout)
+}
+
+// campaignRetry starts a new campaign from a failed one. The steps that
+// finished are not run again.
+func (c *client) campaignRetry(args []string, stdout io.Writer) error {
+	fs := flag.NewFlagSet("campaign-retry", flag.ContinueOnError)
+	wait := fs.Bool("wait", false, "wait until the campaign finishes")
+	if len(args) == 0 || strings.HasPrefix(args[0], "-") {
+		return fmt.Errorf("name the failed campaign, for example: merlinctl campaign-retry camp_1234")
+	}
+	if err := fs.Parse(args[1:]); err != nil {
+		return err
+	}
+	raw, err := c.do(http.MethodPost, "/v1/campaigns/"+args[0]+"/retry", nil)
+	if err != nil {
+		return err
+	}
+	return c.started(raw, *wait, stdout)
+}
+
+// started prints the ID of a campaign that was just created and, when asked
+// to wait, shows the campaign once it is no longer running.
+func (c *client) started(raw []byte, wait bool, stdout io.Writer) error {
 	var created struct {
 		ID string `json:"id"`
 	}
@@ -340,7 +367,7 @@ func (c *client) campaign(args []string, stdout io.Writer) error {
 		return err
 	}
 	fmt.Fprintln(stdout, created.ID)
-	if !*wait {
+	if !wait {
 		return nil
 	}
 	for {

@@ -30,6 +30,9 @@ type CampaignInput struct {
 	Workflow string         `json:"workflow"`
 	Steps    []Step         `json:"steps"`
 	Input    map[string]any `json:"input"`
+	// Done holds the steps, by ID, that finished in the failed campaign this
+	// one retries. They are not run again: their artifacts are used as they are.
+	Done map[string]StepResult `json:"done,omitempty"`
 }
 
 // Step and campaign statuses.
@@ -134,6 +137,11 @@ func Campaign(ctx wf.Context, in CampaignInput) (CampaignResult, error) {
 	artifact := map[string]string{} // step ID -> the artifact it yields
 	for i, step := range in.Steps {
 		out := &res.Steps[i]
+		if prior, ok := in.Done[step.ID]; ok {
+			out.TaskID, out.ArtifactID, out.Status = prior.TaskID, prior.ArtifactID, StepSucceeded
+			artifact[step.ID] = prior.ArtifactID
+			continue
+		}
 		out.Status = StepRunning
 
 		var derived []string

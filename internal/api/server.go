@@ -68,6 +68,7 @@ func (s *Server) Handler() http.Handler {
 		"POST /v1/campaigns":             s.createCampaign,
 		"GET /v1/campaigns":              s.listCampaigns,
 		"GET /v1/campaigns/{id}":         s.getCampaign,
+		"POST /v1/campaigns/{id}/retry":  s.retryCampaign,
 		"GET /v1/budget":                 s.budget,
 		"GET /v1/control":                s.getControl,
 		"POST /v1/control":               s.setControl,
@@ -522,6 +523,84 @@ func (s *Server) plan(steps []config.Step) ([]workflow.Step, error) {
 		}
 	}
 	return out, nil
+}
+
+// retryCampaign starts a new campaign from a failed one. The steps that
+// finished are not run again, so an outage at one step does not cost the
+// work, and the money, of the steps before it.
+func (s *Server) retryCampaign(w http.ResponseWriter, r *http.Request) error {
+	rec, found, err := s.Store.Campaigns().Get(r.Context(), r.PathValue("id"))
+	if err != nil {
+		return err
+	}
+	if !found {
+		return fail(http.StatusNotFound, "no such campaign")
+	}
+	if rec.State.Status != workflow.StepFailed {
+		return fail(http.StatusConflict, "only a failed campaign can be retried; this one is "+rec.State.Status)
+	}
+	tmpl, ok := s.Config.Workflows[rec.Workflow]
+	if !ok {
+		return fail(http.StatusUnprocessableEntity, "workflow "+strconv.Quote(rec.Workflow)+" is not defined")
+	}
+	steps, err := s.plan(tmpl.Spec.Steps)
+	if err != nil {
+		return err
+	}
+	in := workflow.CampaignInput{ID: newID("camp_"), Workflow: rec.Workflow, Steps: steps, Input: rec.Input, Done: carried(steps, rec.State.Steps)}
+	if err := s.Store.Campaigns().Insert(r.Context(), in, operator); err != nil {
+		return err
+	}
+	s.record(r.Context(), in.ID, "-", "campaign created", map[string]any{"by": operator, "workflow": in.Workflow, "retryOf": rec.ID})
+	if err := s.Workflows.StartCampaign(r.Context(), in); err != nil {
+		failed := workflow.CampaignResult{ID: in.ID, Workflow: in.Workflow, Status: workflow.StepFailed, Reason: "the campaign could not be started"}
+		_ = s.Store.Campaigns().Save(context.WithoutCancel(r.Context()), failed)
+		return err
+	}
+	write(w, http.StatusAccepted, map[string]string{"id": in.ID, "retryOf": rec.ID})
+	return nil
+}
+
+// carried picks the steps of a failed campaign that a retry does not run
+// again: those that succeeded and left an artifact, and whose own needs are
+// carried too. steps must be in an order that satisfies every step's needs.
+//
+// When the step that failed is a check, the work it checked is made again.
+// Otherwise a retry would show a rejected artifact to the check a second
+// time, and a person could repeat that until the check let it through.
+func carried(steps []workflow.Step, prior []workflow.StepResult) map[string]workflow.StepResult {
+	byID := map[string]workflow.Step{}
+	for _, st := range steps {
+		byID[st.ID] = st
+	}
+	done := map[string]workflow.StepResult{}
+	for _, p := range prior {
+		if p.Status == workflow.StepSucceeded && p.ArtifactID != "" {
+			done[p.ID] = p
+		}
+	}
+	var redo func(id string)
+	redo = func(id string) {
+		delete(done, id)
+		if st := byID[id]; st.Evaluator != "" {
+			for _, n := range st.Needs {
+				redo(n)
+			}
+		}
+	}
+	for _, p := range prior {
+		if p.Status == workflow.StepFailed && byID[p.ID].Evaluator != "" {
+			redo(p.ID)
+		}
+	}
+	for _, st := range steps {
+		for _, n := range st.Needs {
+			if _, ok := done[n]; !ok {
+				delete(done, st.ID)
+			}
+		}
+	}
+	return done
 }
 
 func (s *Server) listCampaigns(w http.ResponseWriter, r *http.Request) error {

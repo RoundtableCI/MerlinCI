@@ -19,6 +19,7 @@ import (
 
 	"github.com/RoundtableCI/MerlinCI/internal/api"
 	"github.com/RoundtableCI/MerlinCI/internal/blob"
+	"github.com/RoundtableCI/MerlinCI/internal/budget"
 	"github.com/RoundtableCI/MerlinCI/internal/integrations/credentials"
 	"github.com/RoundtableCI/MerlinCI/internal/integrations/research"
 	"github.com/RoundtableCI/MerlinCI/internal/workflow"
@@ -245,7 +246,11 @@ func TestMarketResearcherEndToEnd(t *testing.T) {
 
 	// The role's configured model and tools are what reached the provider.
 	first := s.model.seen[0]
-	if first.Model != "" && first.Model != "anthropic/claude-haiku-5.5" {
+	want := s.core.Config.Roles["market-researcher"].Spec.Model
+	if want == "" {
+		want = s.core.Config.Models.Spec.Default
+	}
+	if first.Model != "" && first.Model != want {
 		t.Errorf("model = %q", first.Model)
 	}
 	if len(first.Tools) != 2 || !strings.Contains(first.Messages[0].Content, "Never claim: RoundtableCI is more accurate") {
@@ -311,18 +316,18 @@ func TestMarketResearcherEndToEnd(t *testing.T) {
 	}
 
 	// The budget: three model calls and one search, each charged once.
-	var budget struct {
+	var spend struct {
 		Limits []struct {
 			Category, Period, Spent string
 		} `json:"limits"`
 	}
-	s.request(http.MethodGet, "/v1/budget", nil, &budget)
+	s.request(http.MethodGet, "/v1/budget", nil, &spend)
 	spent := map[string]string{}
-	for _, l := range budget.Limits {
+	for _, l := range spend.Limits {
 		spent[l.Category+"/"+l.Period] = l.Spent
 	}
-	if spent["research/month"] != "0.450000" {
-		t.Errorf("research spend = %q, want 0.450000 for one search", spent["research/month"])
+	if want := budget.FromAmount(s.core.Config.Budget.Spec.UnitCosts["research.search"]).String(); spent["research/month"] != want {
+		t.Errorf("research spend = %q, want %s for one search", spent["research/month"], want)
 	}
 	if spent["inference/day"] != artifact.Cost.Amount || spent["inference/day"] != view.Run.Spent {
 		t.Errorf("inference spend: ledger %q, artifact %q, run %q; want all equal", spent["inference/day"], artifact.Cost.Amount, view.Run.Spent)

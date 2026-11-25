@@ -453,6 +453,35 @@ func TestStepLimit(t *testing.T) {
 	}
 }
 
+// On the last allowed call the model is offered no tools and told to finish,
+// so a run that gathered enough still ends with an artifact.
+func TestLastStepAsksForFinalOutput(t *testing.T) {
+	h := newHarness(t, func(b *config.Bundle) {
+		r := b.Roles["researcher"]
+		r.Spec.Limits.MaxSteps = 2
+		b.Roles["researcher"] = r
+	}, calls("search"), final("# Findings\nx"))
+	state := mustRun(t, h)
+	if len(h.provider.seen) != 2 {
+		t.Fatalf("%d inference calls; want 2", len(h.provider.seen))
+	}
+	if len(h.provider.seen[0].Tools) == 0 {
+		t.Error("the first call was offered no tools")
+	}
+	last := h.provider.seen[1]
+	if len(last.Tools) != 0 {
+		t.Errorf("the last call was offered %d tools; want none", len(last.Tools))
+	}
+	if m := last.Messages[len(last.Messages)-1]; m.Role != provider.RoleUser || m.Content != lastStepNote {
+		t.Errorf("the last call ends with %q; want the last-step note", m.Content)
+	}
+	for _, m := range state.Messages {
+		if m.Content == lastStepNote {
+			t.Error("the last-step note was kept in the task's history")
+		}
+	}
+}
+
 // The task budget is checked before the call, so nothing is spent past it.
 func TestTaskBudgetStopsBeforeSpending(t *testing.T) {
 	h := newHarness(t, func(b *config.Bundle) {

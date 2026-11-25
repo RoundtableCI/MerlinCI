@@ -30,10 +30,27 @@ Tick an item when it is done. Items are grouped by what they unblock. Status as 
       purpose so spend is over-counted rather than under-counted.
 - [x] **First real run done 19 Nov 2026** (Market Researcher, free Nemotron model, Tavily search,
       10 model calls, 4 sources, $0 charged). Still to do: a person reads and judges the output.
-- [ ] **Do the first real run and read the output.** Start the services, then
-      `merlinctl run market-researcher -input '{"topic":"..."}' -wait`. Every test so far used a
-      scripted stand-in for the model, so nobody has yet seen what a real model does with these
-      roles. Expect the role instructions to need tuning.
+- [x] **First full campaign on a real model, 25 Nov 2026.** All six steps of `first-release`
+      succeeded on the free Nemotron model, topic "how developers compare outputs from multiple
+      AI models". About 40 model calls, $0 charged. The five outputs are in
+      `docs/runs/2026-11-25-first-campaign/`.
+- [ ] **Read and judge that campaign's output.** Things noticed on a first read, to decide on:
+      the analyst made up an activation event ("first successful CI/CD run of the comparison
+      workflow") although decision 05 is open; the brief names its own north-star metric instead
+      of activated workspaces; the article's example config uses old model names (gpt-4o,
+      claude-3.5-sonnet); the publication package summarises the code instead of including it,
+      and says Brand Guardian "could not give a clear verdict" although the log shows a pass.
+      Expect the role instructions to need tuning.
+- [ ] **Brand Guardian checks with the same model that writes.** Placeholder since 25 Nov 2026:
+      the free Gemma models were rate-limited at Google all afternoon, so the writer and Brand
+      Guardian were moved to Nemotron (`models.yaml`, `content-writer.yaml`). The pitch wants an
+      independent reviewer. Switch back once Gemma answers, or once paid models are in use.
+- [ ] **The free tier allows 50 model requests a day.** One full campaign used about 40, so it
+      allows one campaign a day at most. Adding OpenRouter credits (above) lifts this.
+- [ ] **Two old MerlinCI programs from 19 Nov are still running on this machine** (`merlin-api`
+      on port 8080 and `merlin-worker`, both from `AppData\Local\Temp\merlin\`). I was not allowed
+      to stop them, so today's run used port 8081 and its own work queue. Close them in Task
+      Manager, or restart the computer.
 
 ## B. Needed before the Market Researcher can search the web
 
